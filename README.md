@@ -172,7 +172,6 @@ purchasing_analysis = pd.DataFrame(
 purchasing_analysis.columns = ["Number of Unique Items", "Average Price", "Number of Purchases", "Total Revenue"]
 purchasing_analysis.style.format({"Average Price": "${:.2f}", "Total Revenue":"${:.2f}"})
 purchasing_analysis
-
 ```
 
 
@@ -223,15 +222,22 @@ purchasing_analysis
 # Count
 gender = df["Gender"].value_counts()
 
+#more precise, by SN 
+new_gender = df.groupby("Gender")["SN"].unique()
+len(new_gender["Female"])
+len(new_gender["Male"])
+len(new_gender["Other / Non-Disclosed"])
+
+
 # Percentage
-female_gender_percent = gender["Female"]/len(df.index) * 100
-male_gender_percent = gender["Male"]/len(df.index) * 100
-non_disclosed_gender = gender["Other / Non-Disclosed"]/len(df.index) * 100
+female_gender_percent = len(new_gender["Female"])/len(df["SN"].unique()) * 100
+male_gender_percent = len(new_gender["Male"])/len(df["SN"].unique()) * 100
+non_disclosed_gender = len(new_gender["Other / Non-Disclosed"])/len(df["SN"].unique()) * 100
 
 percentage = pd.DataFrame(
         {   "Gender": ["Female", "Male", "Non Disclosed Gender"],
             "Percentage of Players": [female_gender_percent,male_gender_percent,non_disclosed_gender],
-            "Total Count": [gender["Female"],gender["Male"],gender["Other / Non-Disclosed"]],
+            "Total Count": [len(new_gender["Female"]),len(new_gender["Male"]),len(new_gender["Other / Non-Disclosed"])],
         }
     )
 percentage[["Gender","Total Count","Percentage of Players"]]
@@ -239,6 +245,7 @@ new_percentage = percentage.set_index(['Gender'])
 
 del new_percentage.index.name
 new_percentage
+
 
 ```
 
@@ -270,18 +277,18 @@ new_percentage
   <tbody>
     <tr>
       <th>Female</th>
-      <td>17.435897</td>
-      <td>136</td>
+      <td>17.452007</td>
+      <td>100</td>
     </tr>
     <tr>
       <th>Male</th>
-      <td>81.153846</td>
-      <td>633</td>
+      <td>81.151832</td>
+      <td>465</td>
     </tr>
     <tr>
       <th>Non Disclosed Gender</th>
-      <td>1.410256</td>
-      <td>11</td>
+      <td>1.396161</td>
+      <td>8</td>
     </tr>
   </tbody>
 </table>
@@ -330,58 +337,27 @@ new_purchase_analysis
 ```
 
 
+    ---------------------------------------------------------------------------
+
+    ValueError                                Traceback (most recent call last)
+
+    <ipython-input-152-17120ae36a90> in <module>()
+          1 #Purchase Count Variables
+    ----> 2 filtered_f_purchase_price = df.loc[df["Gender"] == "Female" and df["SN"].unique()]
+          3 filtered_m_purchase_price = df.loc[df["Gender"] == "Male"]
+          4 filtered_n_purchase_price = df.loc[df["Gender"] == "Other / Non-Disclosed"]
+          5 
 
 
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
+    /Users/Mariah/anaconda/lib/python3.6/site-packages/pandas/core/generic.py in __nonzero__(self)
+        951         raise ValueError("The truth value of a {0} is ambiguous. "
+        952                          "Use a.empty, a.bool(), a.item(), a.any() or a.all()."
+    --> 953                          .format(self.__class__.__name__))
+        954 
+        955     __bool__ = __nonzero__
 
-    .dataframe thead th {
-        text-align: left;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Average Purchase Price</th>
-      <th>Normalized Totals</th>
-      <th>Purchase Count</th>
-      <th>Total Purchase Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>Female</th>
-      <td>2.815515</td>
-      <td>3.829100</td>
-      <td>136</td>
-      <td>382.91</td>
-    </tr>
-    <tr>
-      <th>Male</th>
-      <td>2.950521</td>
-      <td>4.016516</td>
-      <td>633</td>
-      <td>1867.68</td>
-    </tr>
-    <tr>
-      <th>Non Disclosed Gender</th>
-      <td>3.249091</td>
-      <td>4.467500</td>
-      <td>11</td>
-      <td>35.74</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
+    ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
 
 
 # Age Demographics
